@@ -77,6 +77,7 @@ uint8_t pru_i2c_test_function( uint8_t i2cDevice){
         while (pru_rpmsg_receive(&transport, &src, &dst, payload, &len) 
             == PRU_RPMSG_SUCCESS) {
           uint8_t address=0x1F;
+          pru_i2c_driver_software_reset(1);
           sample=configure_KX132(address);
           sample=sample_data(address);
           memcpy(payload, "\0\0\0\0\0\0\0\0\0\0\0", 11);
@@ -101,6 +102,7 @@ uint8_t configure_KX132(uint16_t address){
   to_send=0x00; // send 0x00 to CNTL1
   if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,1,&to_send)){return 1;}
    /*Set Output Data Rate to 50Hz*/
+  /*to_send=0x0b; // send 0x06 to ODCNTL*/
   to_send=0x06; // send 0x06 to ODCNTL
   if(pru_i2c_driver_transmit_byte(address,KX132_ODCNTL,1,&to_send)){return 1;}
    /*Set the sensor in operating mode*/
@@ -109,18 +111,17 @@ uint8_t configure_KX132(uint16_t address){
   return 0;
 }
 uint8_t sample_data(uint16_t address){
+  /*long data_size=50;*/
   uint16_t received=0;
-  uint16_t data_received[60];
-  uint8_t LSB_MSB[2];
+  uint16_t data_received[15]; //needs to be an even number for 16bit res
   uint16_t i;
-  for(i=0;i<60;i++){
+  for(i=0;i<15;i+=2){
     do{ // wait for new data to be ready in register
      pru_i2c_driver_receive_byte(address,KX132_INS2,0,&received);
     }while(!(received&0x10));
-  pru_i2c_driver_receive_bytes(address,KX132_XOUT_L,2,LSB_MSB);
-  data_received[i]=(uint16_t)LSB_MSB[0]+((uint16_t)LSB_MSB[1]<<8);
+  pru_i2c_driver_receive_bytes(address,KX132_XOUT_L,2,data_received+i);
   }
-  return data_received[20];
+  return data_received[2];
 }
 void main(void) {
 
