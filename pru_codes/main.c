@@ -46,7 +46,7 @@ volatile register unsigned int __R31;
 
 #define NUMBER_SAMPLES 1024
 #define PRU_SRAM  __far __attribute__((cregister("PRU_SHAREDMEM", far)))
-PRU_SRAM   uint16_t pru_mem_array[NUMBER_SAMPLES];
+PRU_SRAM   uint8_t pru_mem_array[NUMBER_SAMPLES];
 /*#define PRU_DMEM1 __far __attribute__((cregister("PRU_DMEM_1_0",  near)))*/
 /*PRU_DMEM0 volatile uint16_t pru_mem_array[NUMBER_SAMPLES];*/
 /*PRU_DMEM1  uint16_t pru_mem_array[NUMBER_SAMPLES];*/
@@ -103,41 +103,38 @@ uint8_t configure_KX132(uint16_t address){
   pru_i2c_driver_software_reset(1);
   // check WHO_AM_I
   /*uint16_t reg=0x13;*/
-  uint16_t received=0;
-  uint16_t to_send;
+  uint8_t received=0;
+  uint8_t to_send;
   pru_i2c_driver_receive_byte(address,KX132_WHO_AM_I,0, &received);
   if(received!=WHO_AM_I){return 1;}
   // Put Sensor in Stanby Mode
   to_send=0x00; // send 0x00 to CNTL1
   if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,1,&to_send)){return 1;}
    /*Set Output Data Rate to 50Hz*/
-  to_send=0x0b; // send 0x06 to ODCNTL
-  /*to_send=0x06; // send 0x06 to ODCNTL*/
+  to_send=0x0b; // send 0x0b to ODCNTL -> 1.6kHz ODR
   if(pru_i2c_driver_transmit_byte(address,KX132_ODCNTL,1,&to_send)){return 1;}
    /*Set the sensor in operating mode*/
-  to_send=0xE0; // send 0xE0 to CNTL1
+  to_send=0xF0; // send 0xF0 to CNTL1, High Perf, High RES,DRDYE, 8g range
   if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,1,&to_send)){return 1;}
   return 0;
 }
 uint8_t sample_data(uint16_t address){
   /*long data_size=50;*/
-  uint16_t received=0;
+  uint8_t received=0;
   /*uint16_t data_received[16]; //needs to be an even number for 16bit res*/
   uint16_t i;
-  uint16_t low_high[2];
-
-  for(i=0;i<512;i++){
+  for(i=0;i<512;i+=2){
     do{ // wait for new data to be ready in register
       pru_i2c_driver_receive_byte(address,KX132_INS2,0,&received);
     }while(!(received&0x10));
     pru_i2c_driver_receive_bytes(address,KX132_XOUT_L,2,pru_mem_array+i);
 
     /*pru_mem_array[i]=NUMBER_SAMPLES-1; // clear the memory */
-    /*pru_mem_array[i]=0xffff; // clear the memory */
+    /*pru_mem_array[i+1]=0xff; // clear the memory */
   }
   /*pru_i2c_driver_receive_byte(address,KX132_WHO_AM_I,0,&pru_mem_array[257]);*/
   /*pru_mem_array[1]=0xff;*/
-  return pru_mem_array[3];
+  return pru_mem_array[0];
 
 }
 void main(void) {

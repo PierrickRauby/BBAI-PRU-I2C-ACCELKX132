@@ -30,12 +30,12 @@ uint8_t pru_i2c_poll_I2C_IRQSTATUS_RAW_BF(uint8_t i2cDevice);
 uint8_t pru_i2c_driver_init(uint8_t i2cDevice, uint16_t dcount,
     uint16_t address);
 uint8_t pru_i2c_driver_transmit_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer);
+    uint16_t bytes,uint8_t *buffer);
 uint8_t pru_i2c_driver_transmit_bytes(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer);
+    uint16_t bytes,uint8_t *buffer);
 uint8_t pru_i2c_driver_receive_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer);
+    uint16_t bytes,uint8_t *buffer);
 uint8_t pru_i2c_driver_receive_bytes(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer);
+    uint16_t bytes,uint8_t *buffer);
 uint8_t pru_i2c_driver_software_reset(uint8_t i2cDevice);
 #endif /* AM572x_PRU_I2C_DRIVER_H_ */

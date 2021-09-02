@@ -167,7 +167,7 @@ uint8_t pru_i2c_driver_init(uint8_t i2cDevice, uint16_t dcount,
 }
 
 uint8_t pru_i2c_driver_transmit_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer){
+    uint16_t bytes,uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5744)*/
      /*If bus is not initialized then try to initialized it*/
     if(pru_i2c_driver_init(1,bytes+1,address)){
@@ -248,7 +248,7 @@ uint8_t pru_i2c_driver_transmit_byte(uint16_t address, uint16_t reg,
     return 0;
 }
 uint8_t pru_i2c_driver_transmit_bytes(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer){
+    uint16_t bytes,uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5744)*/
     if(pru_i2c_driver_init(1,bytes+1,address)){
       return 10;
@@ -335,7 +335,7 @@ uint8_t pru_i2c_driver_transmit_bytes(uint16_t address, uint16_t reg,
 }
 
 uint8_t pru_i2c_driver_receive_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer){
+    uint16_t bytes,uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5743) and for the
      transmitter part on diagram 24-21 (p5746) */
      /*If bus is not initialized then try to initialized it*/
@@ -426,7 +426,7 @@ uint8_t pru_i2c_driver_receive_byte(uint16_t address, uint16_t reg,
 }
 
 uint8_t pru_i2c_driver_receive_bytes(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint16_t *buffer){
+    uint16_t bytes,uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5743) and for the
      transmitter part on diagram 24-21 (p5746) */
   if(pru_i2c_driver_init(1,1,address)){

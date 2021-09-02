@@ -1,5 +1,5 @@
 /*
- * simple_ping_pong_user_space.pru1_1.c
+ * user_space.pru1_1.c
  * Modified by Pierrick Rauby < PierrickRauby - pierrick.rauby@gmail.com >
  * Based on the examples distributed by TI
  * Cedistribution and use in source and binary forms, with or without
@@ -31,9 +31,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
  * To compile use: make 
- * To deploy use: sh ./run.sh
 */
-
 
 
 #include <stdio.h>
