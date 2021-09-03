@@ -44,7 +44,7 @@ volatile register unsigned int __R31;
 #define VIRTIO_CONFIG_S_DRIVER_OK    4
 
 
-#define NUMBER_SAMPLES 1024
+#define NUMBER_SAMPLES 2048
 #define PRU_SRAM  __far __attribute__((cregister("PRU_SHAREDMEM", far)))
 PRU_SRAM   uint8_t pru_mem_array[NUMBER_SAMPLES];
 /*#define PRU_DMEM1 __far __attribute__((cregister("PRU_DMEM_1_0",  near)))*/
@@ -123,18 +123,13 @@ uint8_t sample_data(uint16_t address){
   uint8_t received=0;
   /*uint16_t data_received[16]; //needs to be an even number for 16bit res*/
   uint16_t i;
-  for(i=0;i<512;i+=2){
+  for(i=0;i<NUMBER_SAMPLES-2;i+=2){
     do{ // wait for new data to be ready in register
       pru_i2c_driver_receive_byte(address,KX132_INS2,0,&received);
     }while(!(received&0x10));
     pru_i2c_driver_receive_bytes(address,KX132_XOUT_L,2,pru_mem_array+i);
-
-    /*pru_mem_array[i]=NUMBER_SAMPLES-1; // clear the memory */
-    /*pru_mem_array[i+1]=0xff; // clear the memory */
   }
-  /*pru_i2c_driver_receive_byte(address,KX132_WHO_AM_I,0,&pru_mem_array[257]);*/
-  /*pru_mem_array[1]=0xff;*/
-  return pru_mem_array[0];
+  return 0;
 
 }
 void main(void) {
