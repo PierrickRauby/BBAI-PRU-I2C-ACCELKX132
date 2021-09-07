@@ -56,8 +56,8 @@ int readmemory() {
   size_t pagesize = sysconf(_SC_PAGE_SIZE);
   off_t page_base = (PRU_SHAREDMEM / pagesize) * pagesize;
   off_t page_offset = PRU_SHAREDMEM - page_base;
-  int output_file = open("./acquisition.csv", O_RDWR);
-  if (output_file == NULL) {
+  FILE *output_file;
+  if((output_file = fopen("./acquisition.csv","w"))==NULL) {
     printf("Error, cannot open ");
     exit(1);
   }
@@ -71,13 +71,19 @@ int readmemory() {
   int16_t combined;
   float result;
   uint8_t msb,lsb;
+  char result_string[20];
+
   for (i = 0; i < len-2; i+=2){
     lsb=mem[page_offset + i];
     msb=mem[page_offset + i+1];
     combined = (msb << 8 ) | (lsb & 0xff);
     result=0.0002441407513657033*(float)combined;
-    printf("  result: %0.6f\n",result);
+    gcvt(result,9, result_string);
+    result_string[12]='\n';
+    fputs(result_string,output_file);
+    /*printf("  result: %s\n",result_string);*/
   }
+  fclose(output_file);
   return 0;
 }
 
