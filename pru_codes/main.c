@@ -105,17 +105,18 @@ uint8_t configure_KX132(uint16_t address){
   /*uint16_t reg=0x13;*/
   uint8_t received=0;
   uint8_t to_send;
-  pru_i2c_driver_receive_byte(address,KX132_WHO_AM_I,0, &received);
+  pru_i2c_driver_receive_byte(address,KX132_WHO_AM_I, &received);
   if(received!=WHO_AM_I){return 1;}
   // Put Sensor in Stanby Mode
   to_send=0x00; // send 0x00 to CNTL1
-  if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,1,&to_send)){return 1;}
+  if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,&to_send)){return 1;}
    /*Set Output Data Rate to 50Hz*/
+  //to_send=0x0b; // send 0x0b to ODCNTL -> 1.6kHz ODR
   to_send=0x0b; // send 0x0b to ODCNTL -> 1.6kHz ODR
-  if(pru_i2c_driver_transmit_byte(address,KX132_ODCNTL,1,&to_send)){return 1;}
+  if(pru_i2c_driver_transmit_byte(address,KX132_ODCNTL,&to_send)){return 1;}
    /*Set the sensor in operating mode*/
-  to_send=0xF0; // send 0xF0 to CNTL1, High Perf, High RES,DRDYE, 8g range
-  if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,1,&to_send)){return 1;}
+  to_send=0xe8; // send 0xe8 to CNTL1, High Perf, High RES,DRDYE, 4g range
+  if(pru_i2c_driver_transmit_byte(address,KX132_CNTL1,&to_send)){return 1;}
   return 0;
 }
 uint8_t sample_data(uint16_t address){
@@ -123,9 +124,9 @@ uint8_t sample_data(uint16_t address){
   uint8_t received=0;
   /*uint16_t data_received[16]; //needs to be an even number for 16bit res*/
   uint16_t i;
-  for(i=0;i<NUMBER_SAMPLES-2;i+=2){
+  for(i=0;i<NUMBER_SAMPLES;i+=2){
     do{ // wait for new data to be ready in register
-      pru_i2c_driver_receive_byte(address,KX132_INS2,0,&received);
+      pru_i2c_driver_receive_byte(address,KX132_INS2,&received);
     }while(!(received&0x10));
     pru_i2c_driver_receive_bytes(address,KX132_XOUT_L,2,pru_mem_array+i);
   }

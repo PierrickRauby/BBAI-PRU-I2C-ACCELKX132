@@ -167,10 +167,10 @@ uint8_t pru_i2c_driver_init(uint8_t i2cDevice, uint16_t dcount,
 }
 
 uint8_t pru_i2c_driver_transmit_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint8_t *buffer){
+    uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5744)*/
      /*If bus is not initialized then try to initialized it*/
-    if(pru_i2c_driver_init(1,bytes+1,address)){
+    if(pru_i2c_driver_init(1,2,address)){
       return 10;
     }
   /*[EXPECTED I2C_IRQENABLE_&((*PRU_I2Cmain).I2C_SBLOCK)CLR = FFFFh]*/
@@ -225,10 +225,10 @@ uint8_t pru_i2c_driver_transmit_byte(uint16_t address, uint16_t reg,
       transmitted*/
     uint8_t TXSTAT_value=PRU_I2C->I2C_BUFSTAT_bit.TXSTAT;
     /*Write I2Ci.I2C_DATA register for I2Ci.I2C_BUFSTAT[5:0] TXSTAT times*/
-    uint16_t i;
-    for(i=0;i<bytes;i++){
+    /*uint16_t i;*/
+    /*for(i=0;i<bytes;i++){*/
       PRU_I2C->I2C_DATA_bit.DATA=buffer[0];
-    }
+    /*}*/
     /*Clear XDR bit (see Note 1)*/
     PRU_I2C->I2C_IRQSTATUS_bit.XDR=1;
   }
@@ -335,11 +335,11 @@ uint8_t pru_i2c_driver_transmit_bytes(uint16_t address, uint16_t reg,
 }
 
 uint8_t pru_i2c_driver_receive_byte(uint16_t address, uint16_t reg,
-    uint16_t bytes,uint8_t *buffer){
+    uint8_t *buffer){
   /* this function setups the I2C based on diagram 24-20 (p5743) and for the
      transmitter part on diagram 24-21 (p5746) */
      /*If bus is not initialized then try to initialized it*/
-  if(pru_i2c_driver_init(1,bytes+1,address)){
+  if(pru_i2c_driver_init(1,1,address)){
     return 172;
   }
   /*[EXPECTED I2C_IRQENABLE_&((*PRU_I2Cmain).I2C_SBLOCK)CLR = FFFFh]*/
@@ -518,6 +518,8 @@ uint8_t pru_i2c_driver_receive_bytes(uint16_t address, uint16_t reg,
   return 0;
 }
 uint8_t pru_i2c_driver_software_reset(uint8_t i2cDevice){
+// TODO: Validate that removing the clock like that does not cause any crash
+  HWREG(CM_L4PER_I2C4_CLKCTRL)=0x0;
   /*24.1.4.3 HS I2C Software Reset*/
   /*1. Ensure that the module is disabled */
   /*   (clear the I2Ci.I2C_CON[15] I2C_EN bit to 0).*/

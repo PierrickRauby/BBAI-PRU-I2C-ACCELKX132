@@ -71,19 +71,18 @@ int readmemory() {
   int16_t combined;
   float result;
   uint8_t msb,lsb;
-  char result_string[20];
+  char result_string[200];
 
-  for (i = 0; i < len-2; i+=2){
+  for (i = 0; i < len; i+=2){
     lsb=mem[page_offset + i];
     msb=mem[page_offset + i+1];
     combined = (msb << 8 ) | (lsb & 0xff);
-    result=0.0002441407513657033*(float)combined;
-    gcvt(result,9, result_string);
-    result_string[12]='\n';
-    fputs(result_string,output_file);
-    /*printf("  result: %s\n",result_string);*/
+    //result=0.0002441407*(float)combined;
+    result=.00012207037*(float)combined;
+     fprintf(output_file, "%.9f\n",result);
   }
   fclose(output_file);
+  printf("results saved under ./acquisition.csv\n");
   return 0;
 }
 
@@ -118,7 +117,7 @@ int main(void)
     sprintf(str, "%s", readBuf);
     if (result > 0){
       if(!strcmp(str,"0")){
-        printf("Acquisition sucess, retrieving results");
+        printf("Acquisition sucess, ");
       }else{
         printf("Acquisition error\n");
       }
