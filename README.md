@@ -1,7 +1,7 @@
-# BBAI-PRU-I2C [Work in Progress]
-PRU I2C driver for BeagleBone AI. This work presents some simple fonction to 
-control High Speed I2C controller of the AM5729 of the BeagleBone AI. 
-__ This has been developped for the BBAI TIDL image: 4.14.108-ti-r131 __ There 
+# BBAI-PRU-I2C-ACCELLX132 [Work in Progress]
+Usage of the KX132 with the BBAI PRU I2C driver for BeagleBone AI.
+This work takes advantage of an the BBAI-PRU-I2C driver to obtain deterministic vibration data with the Beaglebone AI. 
+__This has been developped for the BBAI TIDL image: 4.14.108-ti-r131__ There 
 are changes in newer images: the call to remoteproc are done differently, the 
 PRUs names are also different. However, at the time 4.14.108-ti-r131 is 
 what you get if you use the recommanded images from the BeagleBone Foundation 
@@ -9,16 +9,6 @@ what you get if you use the recommanded images from the BeagleBone Foundation
 image.
 
 ## How to use the codes?
-
-### A simple transaction 
-
-The following describes how to get a simple I2C transaction between the
-Beaglebone AI I2C3 (SCL on P9.19, SDA on P9.20) and an 
-[MMA8451 accelerometer]
-(https://learn.adafruit.com/adafruit-mma8451-accelerometer-breakout) address 
-0x1D in the I2C bus. It will enable the Portrait/Landscape detection and set the
-debounce counter mode selection to 0 by writing 0x40 in the PL_CFG register 
-(address 0x11). Then it will read back the value of this register.
 
 Clone the repository:
 ```
